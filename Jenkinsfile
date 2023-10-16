@@ -28,11 +28,10 @@ pipeline {
                 // For example, copying files to a web server, deploying to AWS, or using Docker
             }
         }
-    }
 
     post {
         success {
             // You can add post-build actions here, e.g., sending notifications
         }
     }
-}
+
