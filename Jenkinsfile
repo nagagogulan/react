@@ -1,37 +1,55 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials') // Replace with your Docker Hub credentials ID
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout your code from a version control system (e.g., Git)
                 checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install Node.js and npm dependencies
                 sh "npm install"
             }
         }
 
         stage('Build') {
             steps {
-                // Build your React app
                 sh "npm run build"
             }
         }
 
-        stage('Deploy') {
+        stage('Dockerize') {
             steps {
-                // You can define your deployment steps here
-                // For example, copying files to a web server, deploying to AWS, or using Docker
+                script {
+                    def dockerImage = docker.build("your-dockerhub-username/your-image-name:${env.BUILD_NUMBER}")
+                    dockerImage.push()
+                }
             }
         }
+
+        stage('Deploy to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'DOCKER_HUB_CREDENTIALS', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+                        sh """
+                        docker login -u your-dockerhub-username -p "\$DOCKER_HUB_CREDENTIALS"
+                        docker push your-dockerhub-username/your-image-name:${env.BUILD_NUMBER}
+                        """
+                    }
+                }
+            }
+        }
+    }
 
     post {
         success {
             // You can add post-build actions here, e.g., sending notifications
         }
     }
-
+}
