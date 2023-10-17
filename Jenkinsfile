@@ -7,15 +7,9 @@ pipeline {
                 checkout scm
             }
         }
-        
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
         stage('Build') {
             steps {
+                sh 'npm install'
                 sh 'npm run build'
             }
         }
