@@ -4,9 +4,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                    checkout scm
+                }
             }
         }
+
         stage('Build') {
             steps {
                 sh 'npm install'
@@ -16,7 +19,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                // Add deployment steps here, e.g., deploying to a web server
+                // Add deployment steps here, like copying files to a web server or deploying to a cloud service.
             }
         }
     }
