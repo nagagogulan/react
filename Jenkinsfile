@@ -1,34 +1,29 @@
 pipeline {
     agent any
-
+    
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                // Manually check out your Git repository
-                git url: 'https://github.com/nagagogulan/react', branch: 'your-branch'
+                script {
+                    dockerImage = docker.build("nagagogulan/nodejs-app:${env.BUILD_ID}")
+                }
             }
         }
-
-        stage('Install Dependencies') {
+        
+        stage('Push to Docker Hub') {
             steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Build and Run') {
-            steps {
-                sh 'npm start'
+                script {
+                    dockerImage.push()
+                }
             }
         }
     }
-
+    
     post {
-        success {
-            echo 'Node.js application build and run were successful!'
-        }
-        failure {
-            echo 'Node.js application build or run failed.'
+        always {
+            script {
+                dockerImage.remove()
+            }
         }
     }
 }
-
