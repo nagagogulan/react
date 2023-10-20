@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Manually check out your Git repository
-                git url: 'your-repository-url', branch: 'your-branch'
+                git url: 'https://github.com/nagagogulan/react', branch: 'your-branch'
             }
         }
 
